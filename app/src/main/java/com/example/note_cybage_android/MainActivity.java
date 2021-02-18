@@ -2,6 +2,7 @@ package com.example.note_cybage_android;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -14,7 +15,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -43,23 +43,22 @@ public class MainActivity extends AppCompatActivity {
         fab = findViewById(R.id.fab);
         coordinatorLayout = findViewById(R.id.layout_main);
 
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this,AddNotesActivity.class);
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, AddNotesActivity.class);
                 startActivity(intent);
             }
         });
 
 
         notesList = new ArrayList<>();
-
         databaseClass = new DatabaseClass(this);
         fetchAllNotesFromDatabase();
 
-
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new Adapter(this,MainActivity.this,notesList);
+        adapter = new Adapter(this, MainActivity.this, notesList);
         recyclerView.setAdapter(adapter);
 
         ItemTouchHelper helper = new ItemTouchHelper(callback);
@@ -67,24 +66,19 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    void fetchAllNotesFromDatabase()
-    {
+
+    void fetchAllNotesFromDatabase() {
         Cursor cursor = databaseClass.readAllData();
 
-        if (cursor.getCount() == 0)
-        {
-            Toast.makeText(this, "No Data to Show", Toast.LENGTH_SHORT).show();
-        }
-        else
-        {
-            while (cursor.moveToNext())
-            {
-               notesList.add(new Model(cursor.getString(0),cursor.getString(1),cursor.getString(2)));
+        if (cursor.getCount() == 0) {
+            Toast.makeText(this, "No Data to show", Toast.LENGTH_SHORT).show();
+        } else {
+            while (cursor.moveToNext()) {
+                notesList.add(new Model(cursor.getString(0), cursor.getString(1), cursor.getString(2)));
             }
         }
 
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -96,26 +90,27 @@ public class MainActivity extends AppCompatActivity {
 
         SearchView.OnQueryTextListener listener = new SearchView.OnQueryTextListener() {
             @Override
-            public boolean onQueryTextSubmit(String s) {
+            public boolean onQueryTextSubmit(String query) {
                 return false;
             }
 
             @Override
-            public boolean onQueryTextChange(String s) {
-                adapter.getFilter().filter(s);
+            public boolean onQueryTextChange(String newText) {
+                adapter.getFilter().filter(newText);
                 return true;
             }
         };
-        searchView.setOnQueryTextListener(listener);
-        return super.onCreateOptionsMenu(menu);
 
+        searchView.setOnQueryTextListener(listener);
+
+
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
-        if(item.getItemId() == R.id.delete_all_notes)
-        {
+        if (item.getItemId() == R.id.delete_all_notes) {
             deleteAllNotes();
         }
 
@@ -123,14 +118,14 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void deleteAllNotes()
-    {
+    private void deleteAllNotes() {
         DatabaseClass db = new DatabaseClass(MainActivity.this);
         db.deleteAllNotes();
         recreate();
     }
 
-    ItemTouchHelper.SimpleCallback callback = new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.RIGHT) {
+
+    ItemTouchHelper.SimpleCallback callback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
         @Override
         public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
             return false;
@@ -144,11 +139,11 @@ public class MainActivity extends AppCompatActivity {
 
             adapter.removeItem(viewHolder.getAdapterPosition());
 
-            Snackbar snackbar = Snackbar.make(coordinatorLayout,"Item Deleted",Snackbar.LENGTH_LONG)
+            Snackbar snackbar = Snackbar.make(coordinatorLayout, "Item Deleted", Snackbar.LENGTH_LONG)
                     .setAction("UNDO", new View.OnClickListener() {
                         @Override
-                        public void onClick(View view) {
-                            adapter.restoreItem(item,position);
+                        public void onClick(View v) {
+                            adapter.restoreItem(item, position);
                             recyclerView.scrollToPosition(position);
                         }
                     }).addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
@@ -156,16 +151,18 @@ public class MainActivity extends AppCompatActivity {
                         public void onDismissed(Snackbar transientBottomBar, int event) {
                             super.onDismissed(transientBottomBar, event);
 
-                            if (!(event == DISMISS_EVENT_ACTION))
-                            {
+                            if (!(event == DISMISS_EVENT_ACTION)) {
                                 DatabaseClass db = new DatabaseClass(MainActivity.this);
                                 db.deleteSingleItem(item.getId());
                             }
+
+
                         }
                     });
 
             snackbar.setActionTextColor(Color.YELLOW);
             snackbar.show();
+
         }
     };
 

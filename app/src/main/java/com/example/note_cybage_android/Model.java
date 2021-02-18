@@ -1,5 +1,6 @@
 package com.example.note_cybage_android;
 
+
 public class Model {
 
     String title;
@@ -36,3 +37,4 @@ public class Model {
         this.id = id;
     }
 }
+

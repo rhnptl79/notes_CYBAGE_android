@@ -20,7 +20,7 @@
         android:layout_margin="8dp"
         android:hint="Description"
         android:id="@+id/description"
-        android:layout_below="@+id/title"
+        android:layout_below="@id/title"
         android:textColor="@color/black"/>
 
     <Button
@@ -34,6 +34,5 @@
         android:textStyle="bold"
         android:textColor="@color/white"
         android:id="@+id/addNote"/>
-
 
 </RelativeLayout>

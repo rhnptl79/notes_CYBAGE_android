@@ -12,11 +12,8 @@ import android.widget.Toast;
 
 public class AddNotesActivity extends AppCompatActivity {
 
-    EditText title,description;
+    EditText title, description;
     Button addNote;
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,32 +24,27 @@ public class AddNotesActivity extends AppCompatActivity {
         description = findViewById(R.id.description);
         addNote = findViewById(R.id.addNote);
 
-
         addNote.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
 
-                if (!TextUtils.isEmpty(title.getText().toString()) && !TextUtils.isEmpty(description.getText().toString()))
-                {
+
+                if (!TextUtils.isEmpty(title.getText().toString()) && !TextUtils.isEmpty(description.getText().toString())) {
                     DatabaseClass db = new DatabaseClass(AddNotesActivity.this);
-                    db.addNotes(title.getText().toString(),description.getText().toString());
+                    db.addNotes(title.getText().toString(), description.getText().toString());
 
                     Intent intent = new Intent(AddNotesActivity.this,MainActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                     finish();
 
-
-
-                }
-                else 
-                {
+                } else {
                     Toast.makeText(AddNotesActivity.this, "Both Fields Required", Toast.LENGTH_SHORT).show();
                 }
 
+
             }
         });
-
 
     }
 }
