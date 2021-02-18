@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     DatabaseClass databaseClass;
     CoordinatorLayout coordinatorLayout;
 
+    // Completed Note Part
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
