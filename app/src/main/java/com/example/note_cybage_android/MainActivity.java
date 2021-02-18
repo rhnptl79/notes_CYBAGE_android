@@ -2,6 +2,8 @@ package com.example.note_cybage_android;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     Adapter adapter;
     List<Model> notesList;
     DatabaseClass databaseClass;
+    CoordinatorLayout coordinatorLayout;
 
 
     @Override
@@ -35,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.recycler_view);
         fab = findViewById(R.id.fab);
+        coordinatorLayout = findViewById(R.id.layout_main);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,6 +123,25 @@ public class MainActivity extends AppCompatActivity {
         db.deleteAllNotes();
         recreate();
     }
+
+    ItemTouchHelper.SimpleCallback callback = new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.RIGHT) {
+        @Override
+        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+            return false;
+        }
+
+        @Override
+        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+
+            int position = viewHolder.getAdapterPosition();
+            Model item = adapter.getList().get(position);
+
+            adapter.removeItem(viewHolder.getAdapterPosition());
+
+
+
+        }
+    };
 
 }
 
