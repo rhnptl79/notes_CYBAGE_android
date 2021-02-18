@@ -1,15 +1,18 @@
 package com.example.note_cybage_android;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -22,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     FloatingActionButton fab;
     Adapter adapter;
     List<Model> notesList;
+    DatabaseClass databaseClass;
 
 
     @Override
@@ -42,11 +46,35 @@ public class MainActivity extends AppCompatActivity {
 
 
         notesList = new ArrayList<>();
+
+        databaseClass = new DatabaseClass(this);
+        fetchAllNotesFromDatabase();
+
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new Adapter(this,MainActivity.this,notesList);
         recyclerView.setAdapter(adapter);
 
     }
+
+    void fetchAllNotesFromDatabase()
+    {
+        Cursor cursor = databaseClass.readAllData();
+
+        if (cursor.getCount() == 0)
+        {
+            Toast.makeText(this, "No Data to Show", Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+            while (cursor.moveToNext())
+            {
+               notesList.add(new Model(cursor.getString(0),cursor.getString(1),cursor.getString(2)));
+            }
+        }
+
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -71,4 +99,44 @@ public class MainActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
 
     }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        if(item.getItemId() == R.id.delete_all_notes)
+        {
+            deleteAllNotes();
+        }
+
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void deleteAllNotes()
+    {
+        DatabaseClass db = new DatabaseClass(MainActivity.this);
+        db.deleteAllNotes();
+        recreate();
+    }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
