@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,6 +18,8 @@ import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +61,8 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new Adapter(this,MainActivity.this,notesList);
         recyclerView.setAdapter(adapter);
+
+
 
     }
 
@@ -138,8 +143,28 @@ public class MainActivity extends AppCompatActivity {
 
             adapter.removeItem(viewHolder.getAdapterPosition());
 
+            Snackbar snackbar = Snackbar.make(coordinatorLayout,"Item Deleted",Snackbar.LENGTH_LONG)
+                    .setAction("UNDO", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            adapter.restoreItem(item,position);
+                            recyclerView.scrollToPosition(position);
+                        }
+                    }).addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
+                        @Override
+                        public void onDismissed(Snackbar transientBottomBar, int event) {
+                            super.onDismissed(transientBottomBar, event);
 
+                            if (!(event == DISMISS_EVENT_ACTION))
+                            {
+                                DatabaseClass db = new DatabaseClass(MainActivity.this);
+                                db.deleteSingleItem(item.getId());
+                            }
+                        }
+                    });
 
+            snackbar.setActionTextColor(Color.YELLOW);
+            snackbar.show();
         }
     };
 
