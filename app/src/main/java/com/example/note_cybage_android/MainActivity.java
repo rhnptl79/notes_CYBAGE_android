@@ -1,19 +1,51 @@
 package com.example.note_cybage_android;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.SearchView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
+
+    RecyclerView recyclerView;
+    FloatingActionButton fab;
+    Adapter adapter;
+    List<Model> notesList;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        recyclerView = findViewById(R.id.recycler_view);
+        fab = findViewById(R.id.fab);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this,AddNotesActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
+        notesList = new ArrayList<>();
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new Adapter(this,MainActivity.this,notesList);
+        recyclerView.setAdapter(adapter);
+
     }
 
     @Override
