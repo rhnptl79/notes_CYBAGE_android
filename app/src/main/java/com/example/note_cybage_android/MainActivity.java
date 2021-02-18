@@ -62,7 +62,8 @@ public class MainActivity extends AppCompatActivity {
         adapter = new Adapter(this,MainActivity.this,notesList);
         recyclerView.setAdapter(adapter);
 
-
+        ItemTouchHelper helper = new ItemTouchHelper(callback);
+        helper.attachToRecyclerView(recyclerView);
 
     }
 
